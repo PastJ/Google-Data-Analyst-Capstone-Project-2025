@@ -9,7 +9,7 @@ The marketing team at Cyclistic wants to understand how casual riders and annual
 ## Data Source
 The data used in this project comes from Cyclistic’s public historical trip data, specifically for:
 
-- **2019 Q1** and **Q2** (or your actual quarters used)
+- **2019 Q1** and **2020 Q1** 
 
 >  *Data has been cleaned and aggregated in accordance with Cyclistic's data use policy. Personal information has been removed for privacy.*
 
@@ -27,6 +27,7 @@ The data used in this project comes from Cyclistic’s public historical trip da
 | File | Description |
 |------|-------------|
 | `Capstone_Markdown.Rmd` | R Markdown file containing the full code and analysis |
+| `Capstone_Markdown.html` | HTML file of the R Markdown containing the full code and analysis |
 | `Case Study 1_How does a bike-share navigate speedy success.pdf` | Summary of the business task, data sources, and analysis steps |
 | `Google_Capstone_Presentation.pdf` | Final presentation slide deck delivered to stakeholders |
 
@@ -48,7 +49,7 @@ The data used in this project comes from Cyclistic’s public historical trip da
 
 ## How to Reproduce
 To replicate or explore this analysis:
-1. Open the `cyclistic_analysis.Rmd` file in RStudio.
+1. Open the `Capstone_Markdown.Rmd` file in RStudio.
 2. Load the cleaned dataset or download fresh data from the Cyclistic (Divvy) system.
 3. Knit the file or run chunks to explore the code, visualizations, and findings.
 
