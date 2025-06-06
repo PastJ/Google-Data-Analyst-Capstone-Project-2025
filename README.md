@@ -17,6 +17,7 @@ The data used in this project comes from Cyclistic’s public historical trip da
 - **R / RStudio** – for data cleaning, analysis, and visualization
 - **Excel** – for initial data inspection and cleaning
 - **PowerPoint** – for communicating findings
+- **BigQuery** - used as an SQL server for data cleaning
 - **GitHub** – for version control and portfolio presentation
 
 ---
@@ -25,10 +26,9 @@ The data used in this project comes from Cyclistic’s public historical trip da
 
 | File | Description |
 |------|-------------|
-| `cyclistic_analysis.Rmd` | R Markdown file containing the full code and analysis |
-| `project_description.txt` | Summary of the business task, data sources, and analysis steps |
-| `cyclistic_presentation.pdf` | Final presentation slide deck delivered to stakeholders |
-| `cleaned_data_sample.csv` *(optional)* | A sample of the cleaned dataset (if included) |
+| `Capstone_Markdown.Rmd` | R Markdown file containing the full code and analysis |
+| `Case Study 1_How does a bike-share navigate speedy success.pdf` | Summary of the business task, data sources, and analysis steps |
+| `Google_Capstone_Presentation.pdf` | Final presentation slide deck delivered to stakeholders |
 
 ---
 
