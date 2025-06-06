@@ -1,0 +1,306 @@
+---
+title: "Capstone"
+author: "Justin P"
+date: "2025-06-05"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Capstone Project
+
+Project Description:This R Markdown file is the main source of data cleaning and data analytics for the Google Data Analytics Capstone Project. It attempts to answer the question: How do annual members and casual riders use Cyclistic bikes differently? This is part of Track A from the Capstone Project portion of the course using the bike-share dataset, Cyclistic, available by Motivate International Inc. 
+
+
+## Install packages (if needed)
+
+```{r install packages, message=FALSE, include=FALSE}
+#install.packages("ggplot2")
+#install.packages("tidyverse")
+#install.packages("tidyr")
+#install.packages("readr")
+#install.packages("dplyr")
+
+```
+
+## Load environment and relevant packages
+
+```{r packages}
+library(ggplot2)
+library(tidyverse)
+library(readr)
+library(tidyr)
+library(dplyr)
+
+
+```
+
+## Load Datasets
+
+```{r}
+Q1_2019_df <- read_csv("C:/Users/Justin/Documents/Coursera/Google Data Analytics Professional Certificate/Course 8/Case_Study1/Data/Divvy_Trips_2019_Q1 - Divvy_Trips_2019_Q1.csv")
+
+
+Q1_2020_df <- read_csv("C:/Users/Justin/Documents/Coursera/Google Data Analytics Professional Certificate/Course 8/Case_Study1/Data/Divvy_Trips_2020_Q1 - Divvy_Trips_2020_Q1.csv")
+
+```
+
+### Look at Q1-2019
+
+```{r Q1_2019 Data Frame}
+head(Q1_2019_df)
+```
+
+Column names:
+
+```{r Q1_2019 Column Names}
+colnames(Q1_2019_df)
+```
+
+### Look at Q1-2020
+
+```{r Q1_2020 Data Frame}
+head(Q1_2020_df)
+```
+
+Column names:
+
+```{r Q1_2020 Column Names}
+colnames(Q1_2020_df)
+```
+
+## Data Cleaning
+
+### Make 2019 & 2020 column names consistent
+
+Column mapping {2019:2020}: {trip_id: ride_id, start_time: started_at, end_time: ended_at, from_station_id: start_station_id, from_station_name: start_station_name, to_station_id: end_station_id, usertype: member_casual, ride_length: ride_length, day_of_week: day_of_week}
+
+Columns not present in both: Q1_2019: {bikeid, tripduration, gender, birthyear} \| Q1_2020: {rideable_type, start_lat, start_lng, end_lat, end_lng}
+
+```{r Rename columns for consistency}
+library(dplyr)
+
+Q1_2020_df_renamed <- Q1_2020_df %>%
+  rename(
+    trip_id           = ride_id,
+    start_time        = started_at, 
+    end_time          = ended_at, 
+    from_station_id   = start_station_id,
+    from_station_name = start_station_name,
+    to_station_id     = end_station_id,
+    to_station_name     = end_station_name,
+    usertype          = member_casual,
+  )
+
+colnames(Q1_2020_df_renamed)
+
+```
+
+```{r}
+head(Q1_2020_df_renamed)
+```
+
+## Check the structure of the dataframes
+
+```{r structure of Q1_2019}
+str(Q1_2019_df)
+```
+
+```{r structure of Q1_2020}
+str(Q1_2020_df_renamed)
+```
+
+## Join the two data files
+
+### In R
+
+First, the two dataframe columns must be aligned
+
+```{r Get all relevant columns}
+all_cols <- c("trip_id", "start_time", "end_time", "from_station_id", "from_station_name", "to_station_id", "to_station_name", "usertype")
+all_cols
+```
+
+Get all relevant columns for 2019 and 2020
+
+```{r Get all relevant columns for 2019 and 2020}
+df_2019 <- Q1_2019_df[all_cols]
+df_2020 <- Q1_2020_df_renamed[all_cols]
+```
+
+Add a year column to each dataframe to keep track of users per year
+
+```{r Add the years 2019 and 2020 as a column, respectivitly to each dataframe}
+df_2019["Year"] = 2019
+df_2020["Year"] = 2020
+
+```
+
+Last adjustments, making sure columns are of the same type
+
+```{r}
+df_2019$trip_id <- as.character(df_2019$trip_id) # double to character
+
+```
+
+Finally combine the 2019 and 2020 data frames
+
+```{r Combine 2019 and 2020}
+combined_df <- bind_rows(df_2019, df_2020)
+head(combined_df)
+```
+
+### In SQL
+
+### Export data frames and move to SQL to join dataset
+
+```{r}
+write.csv(Q1_2019_df, "2019_partial_clean.csv", row.names = FALSE)
+write.csv(Q1_2020_df_renamed, "2020_partial_clean.csv", row.names = FALSE)
+
+```
+
+### Move to SQL and join datasets
+
+This code was run in BigQuery. And will not work with the current markdown.
+
+Using BigQuery as an easy SQL server. Steps: 1) Create a new project. 2) Create a new dataset, call it bicycle. 3) Upload "2019_partial_clean.csv" and "2020_partial_clean.csv" to the bicycle data set as tables (2019, 2020). 4) Run the code below in BigQuery.
+
+```{r}
+
+#SELECT
+#  CAST(trip_id AS STRING) AS trip_id, # recast trip_id from int64 to string
+#  start_time,
+#  end_time, 
+#  CAST(from_station_id AS STRING) AS from_station_id, # make sure from_station_id is a string
+#  from_station_name, 
+#  CAST(to_station_id AS STRING) AS to_station_id, # make sure to_station_id is a string
+#  to_station_name, 
+#  usertype, 
+#  2019 AS Year, # Add a "Year" column for all users for 2019. 
+#  TIMESTAMP_DIFF(end_time, start_time, MINUTE) AS trip_duration # find the trip duration for each user 
+#FROM `project-1-461316.bicycle.2019`
+
+#UNION ALL # combine all rows and columns from both tables 
+
+#SELECT
+#  CAST(ride_id AS STRING) AS trip_id, # recast trip_id from int64 to string
+#  started_at AS start_time, 
+#  ended_at AS end_time, 
+#  CAST(start_station_id AS STRING) AS from_station_id,  # make sure start_station_id is a string
+#  start_station_name AS from_station_name, 
+#  CAST(end_station_id AS STRING) AS to_station_id,  #  # make sure end_station_id is a string
+#  end_station_name AS to_station_name, 
+#  member_casual AS usertype, 
+#  2020 AS Year, # Add a "Year" column for all users for 2019. 
+#  TIMESTAMP_DIFF(ended_at, started_at, MINUTE) AS trip_duration # find the trip duration for each user 
+
+#FROM `project-1-461316.bicycle.2020`
+
+```
+
+## Question: How do annual members and casual riders use Cyclistic bikes differently?
+
+### Data Cleaning - advanced
+
+Find all users and make sure each user has the same title of {"Subscriber": "member", "customer": "causal"}
+
+```{r}
+combined_df <- combined_df %>%
+  mutate(usertype = case_when(
+    usertype == "member" ~ "Subscriber",
+    usertype == "casual" ~ "Customer",
+    TRUE ~ usertype  # Keep other values unchanged
+  ))
+```
+
+## Data Analysis
+
+Find the number of Subscribers and Customers for 2019 and 2020
+
+```{r}
+# Summarize counts by usertype and year
+summary_df <- combined_df %>%
+  group_by(Year, usertype) %>%
+  summarise(count = n(), .groups = "drop")
+
+# Create the bar plot
+ggplot(summary_df, aes(x = factor(Year), y = count, fill = usertype)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "User Type Counts for 2019 and 2020",
+       x = "Year",
+       y = "Number of Users",
+       fill = "User Type") +
+  theme_minimal()
+```
+
+## Find the average trip duration for Customer and Subscriber
+
+```{r Find the trip duration}
+combined_df$start_time <- as.POSIXct(combined_df$start_time)
+combined_df$end_time <- as.POSIXct(combined_df$end_time)
+
+combined_df$trip_duration <- combined_df$end_time - combined_df$start_time
+combined_df$trip_duration <- as.numeric(combined_df$trip_duration, units = "mins")
+
+```
+
+```{r Make a bar plot of the trip duration of subscribers and customers}
+# Summarize the average trip duration by usertype and year
+summary_df <- combined_df %>%
+  group_by(Year, usertype) %>%
+  summarise(
+    average_duration = mean(trip_duration, na.rm = TRUE),
+    sem = sd(trip_duration, na.rm = TRUE) / sqrt(n()),
+    .groups = "drop"
+  )
+
+ggplot(summary_df, aes(x = factor(Year), y = average_duration, fill = usertype)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    aes(ymin = average_duration - sem, ymax = average_duration + sem),
+    position = position_dodge(width = 0.9),
+    width = 0.2
+  ) +
+  labs(
+    title = "Average Trip Duration by User Type (2019 and 2020)",
+    x = "Year",
+    y = "Average Trip Duration (minutes)",
+    fill = "User Type"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+
+# Calculate average and SEM
+summary_df <- combined_df %>%
+  group_by(Year, usertype) %>%
+  summarise(
+    average_duration = mean(trip_duration, na.rm = TRUE),
+    sem = sd(trip_duration, na.rm = TRUE) / sqrt(n()),
+    .groups = "drop"
+  )
+
+# Plot with facet for usertype
+ggplot(summary_df, aes(x = factor(Year), y = average_duration, fill = factor(Year))) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    aes(ymin = average_duration - sem, ymax = average_duration + sem),
+    position = position_dodge(width = 0.9),
+    width = 0.2
+  ) +
+  facet_wrap(~ usertype) +
+  labs(
+    title = "Average Trip Duration by Year for Each User Type",
+    x = "Year",
+    y = "Average Trip Duration (minutes)",
+    fill = "Year"
+  ) +
+  theme_minimal()
+
+```
